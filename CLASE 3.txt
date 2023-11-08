@@ -1,0 +1,80 @@
+CLASE 2 
+
+Modelos de implementacion de servicios 
+existen varios modelos de implementación con Software:
+
+*Bare Metal 
+* Vistual Machines
+*Container-based infrastructure
+*Serveles Computing 
+
+--Bare Metal
+se utiliza pra instalar un servidor, el software puede acceder directamente al sistema operativo y al hadware. 
+Para vistualizacion se utiliza como infraestructura 
+sistema operativo que se le quiere poner ejm:Red Hat.
+
+Maquinas virtuales
+
+comparten recursos con el equipo principal
+tiene su propia potencia informatica
+las mv se ejecutan sobre un hipervisor(virtual box)(Vmware)(KVM)
+arquitectura
+windows.....vmware.....ubuntu
+--contenedor 
+comparte el mismo kernel, los mismos recursos. ocupa lo que tenga. 
+es una tecnologia docker. 
+podman esta creada por red hat. 
+
+***Servelesss computig 
+
+Clase 3 
+
+putty 
+
+Allowserver prueba
+su -
+
+useradd prueba2 
+passwd prueba2 
+
+en root 
+vi sudo 
+
+ALL
+exit 
+sudo dnf  
+
+
+ese usuario va a borrar usuarios, dar permisos, cambiar de propietarios chown, chmod,y que me permita ingresar systemctl restar sin sudo. 
+
+
+
+ docker commit -m "instalado apache" -a "Diego" 6674edebf54b apache/ubuntu:v1
+
+ 
+
+
+docker run -d -p 8000:80 --name server apache/ubuntu:v1 /usr/sbin/apache2ctl -D FOREGROUND
+
+
+
+manejo de kubernets
+
+CLASE 4 
+
+frase
+
+comunicaciones avanzadas 
+
+
+password autentication descomentamos y no 
+
+ scp prueba5@192.168.41.130:/home/prueba5/.ssh/id_rsa C:\Users\Public\Downloadsç
+
+
+
+
+
+
+
++

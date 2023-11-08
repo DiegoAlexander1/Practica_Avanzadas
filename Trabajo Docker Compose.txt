@@ -1,0 +1,79 @@
+mkdir docker-wordpress
+importante para ingresar 
+
+cd docker-wordpress
+touch docker-compose.yml
+
+version: '3'
+services:
+  mariadb:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: Rinores69
+      MYSQL_DATABASE: Diego
+      MYSQL_USER: Diego
+      MYSQL_PASSWORD: Rinores69
+
+  wordpress:
+    image: wordpress
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_NAME: Diego
+      WORDPRESS_DB_USER: Diego
+      WORDPRESS_DB_PASSWORD: Rinores69
+    depends_on:
+      - mariadb
+
+  backup:
+    image: alpine
+    volumes:
+      - ./backup:/backup
+    command: sh -c "while true; do tar czvf /backup/backup-$(date +\%Y\%m\%d\%H\%M\%S).tar.gz /var/www/html; sleep 300; done"
+    depends_on:
+      - wordpress
+
+
+mkdir backup
+para arrancar los contenedores 
+
+docker-compose up -d
+
+nombres de mis contenedores!!!
+/////
+docker-wordpress-mariadb-1
+
+docker logs docker-wordpress-wordpress-1
+docker logs docker-wordpress-backup-1
+
+
+Para ingresar a mariadb 
+docker exec -it docker-wordpress-mariadb-1 /bin/bash
+mi usuario 
+
+mysql -h docker-wordpress-mariadb-1 -u Diego -p
+
+
+comando para ver el timepo de creacion del backup
+cd backup/
+ls -l 
+
+para ver si estan en la misma red 
+
+docker network ls
+
+
+para ver mis contenedores
+docker ps -a 
+
+
+detener los contenedores
+docker stop $(docker ps -q)
+
+activar los contenedores 
+docker start $(docker ps -a -q)
+
+
+
+
