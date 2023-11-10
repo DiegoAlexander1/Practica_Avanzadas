@@ -1,0 +1,223 @@
+
+
+//epel-release sirve para que tome paquetes  desde ese repositorio
+
+//SERVICIO DE APACHE 
+
+dnf install -y httpd mod_ssl
+
+systemctl status httpd
+systemctl start httpd
+systemctl enable hattpd
+
+regla de firewall
+
+=================
+
+dnf install mariadb-service -y
+systemctl status mariadb
+systemctl start mariadb
+systemctl status mariadb
+systemctl enable mariadb
+=========================
+mysql_secure_installation
+..
+(darle enter donde dice algo de none)
+..
+------------SECCION DE YES O NO-------------
+yes
+yes	(INGRESAN PASSWORD PARA LA BASE DE DATOS en phpmyadmin)....el usuario es root..
+yes
+No
+Yes
+Yes
+-------------------------------
+mysql -u root -p
+//clave de mariadb
+
+
+====================PHP============
+dnf yum install php php-mysqlnd -y
+
+systemctl restart httpd
+			// funciones orientadas al modulo de php
+############CREAR PAGIINA EN PHP#########
+cd var/www/html			//AQUI SE GUARDAN LAS PAGINAS 
+nano etc/httpd/conf/httpd.conf	  //AQUI configuro los archivos http o donde se van a guardar
+nano info.php
+-------------------
+<?php
+phpinfo();
+?>
+--------------------
+systemctl restart httpd 	(ingresas al navegador con tu IP) <http://192.168.11.14>
+
+dnf install phpmyadmin -y
+cd /etc/httpd/conf.d
+ls
+cp phpMyAdmin.conf phpMyAdmin_respaldo
+rm phpMyAdmin.con
+y
+nano phpMyAdmin.conf
+----------------------phpMyAdmin.conf------------------------
+
+Alias /phpMyAdmin /usr/share/phpMyAdmin
+Alias /phpmyadmin /usr/share/phpMyAdmin
+
+
+<Directory /usr/share/phpMyAdmin/>
+   AddDefaultCharset UTF-8
+   <IfModule mod_authz_core.c>
+     # Apache 2.4
+     <RequireAny>
+      Require all granted
+     </RequireAny>
+   </IfModule>
+   <IfModule !mod_authz_core.c>
+     # Apache 2.2
+     Order Deny,Allow
+     Deny from All
+     Allow from 127.0.0.1
+     Allow from ::1
+   </IfModule>
+</Directory>
+<Directory /usr/share/phpMyAdmin/setup/>
+   <IfModule mod_authz_core.c>
+     # Apache 2.4
+     <RequireAny>
+       Require all granted
+     </RequireAny>
+   </IfModule>
+   <IfModule !mod_authz_core.c>
+     # Apache 2.2
+     Order Deny,Allow
+     Deny from All
+     Allow from 127.0.0.1
+     Allow from ::1
+   </IfModule>
+</Directory>
+
+
+-------------------------------------------
+systemctl restart httpd
+
+
+
+cd /var/www/html
+rmkdir descargas
+cd descargas
+touch file.txt
+
+	(ingresas a tu navegador con ip y la carpeta descargas)
+		http://192.168.11.14/descargas
+
+============AQUI MANDA DEBER=====================
+CONSULTAR DE .HTACCES Y configurar la seguridad donde me pida clave para ingresar a los archivos
+la clave esta enlazada con los usuarios en el sistema.
+
+
+Autentication PAM
+
+VIRTUAL HOST 
+	generar dos paginas diferentes
+		-nombre y apellido
+		-nombre segundo apallido segundo
+	//difentes dominios con la misma direccion IP
+
+
+
+RAID 5-------------------------------------
+
+lsblk
+
+nvme0n2     259:8    0    2G  0 disk
+nvme0n3     259:9    0    2G  0 disk
+nvme0n4     259:10   0    2G  0 disk
+nvme0n5     259:11   0    2G  0 disk
+nvme0n6     259:12   0    2G  0 disk
+
+fdisk /dev/nvme0n2
+n
+p
+enter
+enter
+t
+fd
+w
+fdisk /dev/nvme0n3
+fdisk /dev/nvme0n4
+fdisk /dev/nvme0n5
+fdisk /dev/nvme0n6
+
+hacer para todos 
+
+lsblk
+
+nvme0n2     259:8    0    2G  0 disk
+└─nvme0n2p1 259:13   0    2G  0 part
+nvme0n3     259:9    0    2G  0 disk
+└─nvme0n3p1 259:14   0    2G  0 part
+nvme0n4     259:10   0    2G  0 disk
+└─nvme0n4p1 259:15   0    2G  0 part
+nvme0n5     259:11   0    2G  0 disk
+└─nvme0n5p1 259:16   0    2G  0 part
+nvme0n6     259:12   0    2G  0 disk
+└─nvme0n6p1 259:17   0    2G  0 part
+
+
+mdadm --create /dev/md0 -l 5 -n 3 /dev/nvme0n2p1 /dev/nvme0n3p1 /dev/nvme0n4p1
+
+watch cat /proc/mdstat
+
+mdadm --detail /dev/md0
+
+mkfs.ext4 /dev/md0
+
+para crear la careta e los raid5 
+
+mkdir /mnt/raid5
+mount /dev/md0 /mnt/raid5/
+
+para verificar
+
+cd /mnt/raid5/
+ls
+vi archivo1.txt
+Archivo de prueba 1
+cp archivo1.txt archivo2.txt
+vi archivo2.txt
+Archivo de prueba 2
+cp archivo1.txt archivo3.txt
+vi archivo3.txt
+Archivo de prueba 3
+ls
+cd /
+mdadm --detail /dev/md0
+
+sudo mdadm --remove /dev/md0 /dev/nvme0n7p1
+
+
+*para desabilitar
+
+mdadm --manage --fail /dev/md0 /dev/nvme0n4p1
+
+*para arreglar 
+mdadm --manage /dev/md0 --re-add /dev/nvme0n4p1
+
+*la activamos 
+mdadm --manage /dev/md0 --add /dev/nvme0n4p1
+
+*Para reemplazarla 
+sudo mdadm --add /dev/md0 /dev/nvme0n5p1
+sudo mdadm --detail /dev/md0
+
+cat /proc/mdstat
+sudo mdadm --remove /dev/md0 /dev/nvme0n4p1
+ cd /mnt/raid5/
+
+---------------github
+git init
+git push -u origin Practica_Avanzadas
+git log
+
+lsblk
