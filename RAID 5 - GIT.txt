@@ -1,0 +1,100 @@
+RAID 5-------------------------------------
+
+lsblk
+
+nvme0n2     259:8    0    2G  0 disk
+nvme0n3     259:9    0    2G  0 disk
+nvme0n4     259:10   0    2G  0 disk
+nvme0n5     259:11   0    2G  0 disk
+nvme0n6     259:12   0    2G  0 disk
+
+fdisk /dev/nvme0n2
+n
+p
+enter
+enter
+t
+fd
+w
+fdisk /dev/nvme0n3
+fdisk /dev/nvme0n4
+fdisk /dev/nvme0n5
+fdisk /dev/nvme0n6
+
+hacer para todos 
+
+lsblk
+
+nvme0n2     259:8    0    2G  0 disk
+└─nvme0n2p1 259:13   0    2G  0 part
+nvme0n3     259:9    0    2G  0 disk
+└─nvme0n3p1 259:14   0    2G  0 part
+nvme0n4     259:10   0    2G  0 disk
+└─nvme0n4p1 259:15   0    2G  0 part
+nvme0n5     259:11   0    2G  0 disk
+└─nvme0n5p1 259:16   0    2G  0 part
+nvme0n6     259:12   0    2G  0 disk
+└─nvme0n6p1 259:17   0    2G  0 part
+
+
+mdadm --create /dev/md0 -l 5 -n 3 /dev/nvme0n2p1 /dev/nvme0n3p1 /dev/nvme0n4p1
+
+watch cat /proc/mdstat
+
+mdadm --detail /dev/md0
+
+mkfs.ext4 /dev/md0
+
+para crear la careta e los raid5 
+
+mkdir /mnt/raid5
+mount /dev/md0 /mnt/raid5/
+
+para verificar
+
+cd /mnt/raid5/
+ls
+vi archivo1.txt
+Archivo de prueba 1
+cp archivo1.txt archivo2.txt
+vi archivo2.txt
+Archivo de prueba 2
+cp archivo1.txt archivo3.txt
+vi archivo3.txt
+Archivo de prueba 3
+ls
+cd /
+mdadm --detail /dev/md0
+
+sudo mdadm --remove /dev/md0 /dev/nvme0n7p1
+
+
+*para desabilitar
+
+mdadm --manage --fail /dev/md0 /dev/nvme0n4p1
+
+*para arreglar 
+mdadm --manage /dev/md0 --re-add /dev/nvme0n4p1
+
+*la activamos 
+mdadm --manage /dev/md0 --add /dev/nvme0n4p1
+
+*Para reemplazarla 
+sudo mdadm --add /dev/md0 /dev/nvme0n5p1
+sudo mdadm --detail /dev/md0
+
+cat /proc/mdstat
+sudo mdadm --remove /dev/md0 /dev/nvme0n4p1
+ cd /mnt/raid5/
+
+---------------github
+git init
+git push -u origin main
+git log
+
+
+para agregar un nuevo archivo y que se proyecte en mi pagina 
+git add nombre_del_nuevo_archivo
+git commit -m "Agregado nuevo archivo"
+git push origin main
+lsblk
